@@ -29,9 +29,9 @@ const DecorGallery: React.FC = () => {
   const filteredDesigns: Design[] = DESIGNS.filter(d => d.shape === currentShape && (!d.category || d.category === 'decor'));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 reveal">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-xl shadow-sm border border-clay-100">
-        <h2 className="font-serif text-2xl text-clay-900 capitalize">{shape} Collection</h2>
+        <h2 className="font-serif text-2xl text-clay-900 capitalize reveal-heading">{shape} Collection</h2>
 
         {/* Size Filter */}
         <div className="flex flex-wrap gap-2 items-center">
@@ -51,7 +51,7 @@ const DecorGallery: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 reveal">
         {filteredDesigns.length > 0 ? (
           filteredDesigns.map((design) => (
             <DesignCard

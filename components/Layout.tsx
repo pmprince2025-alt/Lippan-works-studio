@@ -31,19 +31,31 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <ArrowLeft size={24} />
               </Link>
             )}
-            <Link to="/" className="flex items-center gap-3 group">
+            <Link to="/" className="flex items-center gap-3 group reveal">
               <img
                 src="./logo.jpg"
                 alt="Lippan Works"
-                className="w-12 h-12 rounded-full object-cover border border-clay-200 shadow-sm bg-clay-100 group-hover:scale-105 transition-transform"
+                className="w-12 h-12 rounded-full object-cover border border-clay-200 shadow-sm bg-clay-100 group-hover:scale-105 transition-transform reveal-image"
               />
               <div className="flex flex-col">
-                <h1 className="font-serif text-xl font-bold text-clay-900 leading-tight">Lippan Works</h1>
-                <span className="text-xs text-clay-600 uppercase tracking-widest">Studio</span>
+                <h1 className="font-serif text-xl font-bold text-clay-900 leading-tight reveal-heading">Lippan Works</h1>
+                <span className="text-xs text-clay-600 uppercase tracking-widest reveal" style={{ transitionDelay: '0.3s' }}>Studio</span>
               </div>
             </Link>
           </div>
-          {/* Desktop Nav placeholder */}
+          {/* Navigation Links */}
+          <nav className="hidden md:flex items-center gap-6">
+            <Link to="/" className="text-clay-600 hover:text-clay-900 font-medium transition-colors">Home</Link>
+            <Link to="/decor" className="text-clay-600 hover:text-clay-900 font-medium transition-colors">Decor</Link>
+            <Link to="/photo-frame" className="text-clay-600 hover:text-clay-900 font-medium transition-colors">Photo Frame</Link>
+            <Link to="/name-plate" className="text-clay-600 hover:text-clay-900 font-medium transition-colors">Name Plate</Link>
+            <Link to="/about" className="text-clay-600 hover:text-clay-900 font-medium transition-colors">About</Link>
+          </nav>
+
+          {/* Mobile Menu Button (Simple implementation) */}
+          <div className="md:hidden flex items-center gap-4">
+            <Link to="/about" className="text-clay-600 font-medium text-sm">About</Link>
+          </div>
         </div>
       </header>
 
@@ -67,7 +79,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               Chat on WhatsApp
             </button>
             <p className="text-center text-clay-400 text-[10px] mt-2 italic">
-              Made with love by Sakuntala
+              © 2026 Lippan Works Studio • Made with love by Sandhya
             </p>
           </div>
         </div>

@@ -34,6 +34,7 @@ const PhotoFrameFlow: React.FC = () => {
 Shape: ${selectedShape}
 Size: ${selectedSize}
 Design Ref: ${selectedDesignCode} (${designTitle})
+Price: ₹${design?.pricing?.[selectedSize] ?? design?.price ?? 'N/A'}
 
 I will share the photo here for the frame.`;
 
@@ -97,7 +98,9 @@ I will share the photo here for the frame.`;
             </div>
             <div className="p-3 bg-white text-center">
               <p className="text-sm font-bold text-clay-800">{design.code}</p>
-              <p className="text-xs text-clay-500 font-medium">₹{design.price}</p>
+              <p className="text-xs text-clay-500 font-medium">
+                ₹{design.pricing && selectedSize && design.pricing[selectedSize] ? design.pricing[selectedSize] : design.price}
+              </p>
             </div>
             {selectedDesignCode === design.code && (
               <div className="absolute top-2 right-2 bg-white rounded-full text-green-600 shadow-sm">
@@ -126,17 +129,17 @@ I will share the photo here for the frame.`;
   );
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h2 className="font-serif text-3xl text-clay-900 mb-8 text-center md:text-left">Create Photo Frame</h2>
+    <div className="max-w-4xl mx-auto reveal">
+      <h2 className="font-serif text-3xl text-clay-900 mb-8 text-center md:text-left reveal-heading">Create Photo Frame</h2>
 
       {/* Progress Bar */}
-      <div className="flex gap-2 mb-10 max-w-lg mx-auto md:mx-0">
+      <div className="flex gap-2 mb-10 max-w-lg mx-auto md:mx-0 reveal" style={{ transitionDelay: '0.2s' }}>
         {[1, 2, 3].map(i => (
           <div key={i} className={`h-2 flex-1 rounded-full transition-colors ${i <= step ? 'bg-clay-800' : 'bg-clay-200'}`} />
         ))}
       </div>
 
-      <div className="bg-white/50 backdrop-blur rounded-2xl md:p-8 md:border md:border-clay-100 md:shadow-sm">
+      <div className="bg-white/50 backdrop-blur rounded-2xl md:p-8 md:border md:border-clay-100 md:shadow-sm reveal" style={{ transitionDelay: '0.3s' }}>
         {step === 1 && renderStep1()}
         {step === 2 && renderStep2()}
         {step === 3 && renderStep3()}

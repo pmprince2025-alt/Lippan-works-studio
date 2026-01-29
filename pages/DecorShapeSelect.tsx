@@ -13,13 +13,13 @@ const DecorShapeSelect: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto">
+    <div className="space-y-8 max-w-5xl mx-auto reveal">
       <div className="text-center space-y-3 mb-8">
-        <h2 className="font-serif text-3xl md:text-4xl text-clay-900">Select Shape</h2>
-        <p className="text-clay-600 text-base md:text-lg">Choose a shape to view available designs</p>
+        <h2 className="font-serif text-3xl md:text-4xl text-clay-900 reveal-heading">Select Shape</h2>
+        <p className="text-clay-600 text-base md:text-lg reveal">Choose a shape to view available designs</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
         {shapes.map((shape) => (
           <button
             key={shape.id}

@@ -149,17 +149,17 @@ I will provide the Name and Language details here.`;
   );
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <h2 className="font-serif text-3xl text-clay-900 mb-8 text-center md:text-left">Customize Name Plate</h2>
+    <div className="max-w-4xl mx-auto reveal">
+      <h2 className="font-serif text-3xl text-clay-900 mb-8 text-center md:text-left reveal-heading">Customize Name Plate</h2>
 
       {/* Progress Bar */}
-      <div className="flex gap-2 mb-10 max-w-lg mx-auto md:mx-0">
+      <div className="flex gap-2 mb-10 max-w-lg mx-auto md:mx-0 reveal" style={{ transitionDelay: '0.2s' }}>
         {[1, 2, 3, 4].map(i => (
           <div key={i} className={`h-2 flex-1 rounded-full transition-colors ${i <= step ? 'bg-clay-800' : 'bg-clay-200'}`} />
         ))}
       </div>
 
-      <div className="bg-white/50 backdrop-blur rounded-2xl md:p-8 md:border md:border-clay-100 md:shadow-sm">
+      <div className="bg-white/50 backdrop-blur rounded-2xl md:p-8 md:border md:border-clay-100 md:shadow-sm reveal" style={{ transitionDelay: '0.3s' }}>
         {step === 1 && renderStep1()}
         {step === 2 && renderStep2()}
         {step === 3 && renderStep3()}

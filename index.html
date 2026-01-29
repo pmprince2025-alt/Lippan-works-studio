@@ -65,7 +65,82 @@
       background-color: #fbf7f5;
       /* clay-50 */
     }
+
+    /* Reveal Animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(60px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+      will-change: opacity, transform;
+    }
+
+    .reveal-heading {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease-out 0.15s, transform 0.8s ease-out 0.15s;
+      will-change: opacity, transform;
+    }
+
+    .reveal-image {
+      opacity: 0;
+      transform: translateY(40px) scale(0.95);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+      will-change: opacity, transform;
+    }
+
+    .revealed {
+      opacity: 1 !important;
+      transform: translateY(0) scale(1) !important;
+    }
   </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.15
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+          } else {
+            // Remove revealed class when section leaves viewport to allow re-animation
+            entry.target.classList.remove('revealed');
+          }
+        });
+      }, observerOptions);
+
+      // Function to observe elements
+      const observeElements = (container = document) => {
+        const elements = container.querySelectorAll('.reveal, .reveal-heading, .reveal-image');
+        elements.forEach(el => observer.observe(el));
+      };
+
+      // Initial observation
+      observeElements();
+
+      // MutationObserver to catch dynamically added content (React)
+      const mutationObserver = new MutationObserver((mutations) => {
+        mutations.forEach(mutation => {
+          mutation.addedNodes.forEach(node => {
+            if (node.nodeType === 1) { // Element node
+              if (node.matches('.reveal, .reveal-heading, .reveal-image')) {
+                observer.observe(node);
+              }
+              observeElements(node);
+            }
+          });
+        });
+      });
+
+      mutationObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+      });
+    });
+  </script>
   <script type="importmap">
 {
   "imports": {
