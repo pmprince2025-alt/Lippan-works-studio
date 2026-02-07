@@ -79,12 +79,12 @@ I will share the photo here for the frame.`;
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {getSizes().map(size => (
           <button
-            key={size}
-            onClick={() => { setSelectedSize(size); setStep(3); }}
+            key={size.value}
+            onClick={() => { setSelectedSize(size.value); setStep(3); }}
             className={`p-8 rounded-2xl border transition-all text-center font-bold tracking-[0.2em] uppercase text-[11px]
-              ${selectedSize === size ? 'bg-clay-900 text-white border-clay-900' : 'bg-white text-clay-600 border-clay-100 hover:border-clay-300'}`}
+              ${selectedSize === size.value ? 'bg-clay-900 text-white border-clay-900' : 'bg-white text-clay-600 border-clay-100 hover:border-clay-300'}`}
           >
-            {size}
+            {size.label}
           </button>
         ))}
       </div>
@@ -99,25 +99,36 @@ I will share the photo here for the frame.`;
         <p className="text-clay-500 text-sm font-light">Fine artisanal patterns for your frame.</p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {designsForShape.map(design => (
-          <button
-            key={design.code}
-            onClick={() => setSelectedDesignCode(design.code)}
-            className={`p-10 rounded-[48px] border-2 text-left transition-all hover:shadow-premium flex flex-col gap-6
-              ${selectedDesignCode === design.code ? 'border-clay-900 bg-clay-900 text-white ring-4 ring-clay-100 shadow-2xl' : 'border-clay-100 bg-white hover:border-clay-200'}`}
-          >
-            <div className="aspect-square w-full rounded-[32px] overflow-hidden">
-              <img src={design.image} alt={design.title} className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transition-all" />
-            </div>
-            <div className="flex justify-between items-start">
-              <div className="space-y-1">
-                <h4 className="font-serif text-2xl leading-none">{design.title}</h4>
-                <p className={`text-[10px] font-bold uppercase tracking-widest ${selectedDesignCode === design.code ? 'text-white/50' : 'text-clay-400'}`}>Code: {design.code}</p>
+        {designsForShape.length > 0 ? (
+          designsForShape.map(design => (
+            <button
+              key={design.code}
+              onClick={() => setSelectedDesignCode(design.code)}
+              className={`p-10 rounded-[48px] border-2 text-left transition-all hover:shadow-premium flex flex-col gap-6
+                ${selectedDesignCode === design.code ? 'border-clay-900 bg-clay-900 text-white ring-4 ring-clay-100 shadow-2xl' : 'border-clay-100 bg-white hover:border-clay-200'}`}
+            >
+              <div className="aspect-square w-full rounded-[32px] overflow-hidden">
+                <img src={design.image} alt={design.title} className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 transition-all" />
               </div>
-              <span className={`font-serif text-xl font-bold italic ${selectedDesignCode === design.code ? 'text-white' : 'text-clay-700'}`}>₹{design.pricing?.[selectedSize] ?? design.price}</span>
+              <div className="flex justify-between items-start">
+                <div className="space-y-1">
+                  <h4 className="font-serif text-2xl leading-none">{design.title}</h4>
+                  <p className={`text-[10px] font-bold uppercase tracking-widest ${selectedDesignCode === design.code ? 'text-white/50' : 'text-clay-400'}`}>Code: {design.code}</p>
+                </div>
+                <span className={`font-serif text-xl font-bold italic ${selectedDesignCode === design.code ? 'text-white' : 'text-clay-700'}`}>₹{design.pricing?.[selectedSize] ?? design.price}</span>
+              </div>
+            </button>
+          ))
+        ) : (
+          <div className="col-span-full py-24 text-center space-y-4">
+            <div className="w-16 h-16 bg-clay-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl italic font-serif text-clay-400">?</span>
             </div>
-          </button>
-        ))}
+            <p className="text-clay-500 text-xl font-light italic font-serif">
+              Temporarily out of stock for this shape. New designs arriving soon.
+            </p>
+          </div>
+        )}
       </div>
       <div className="flex justify-between items-center pt-12 border-t border-clay-100">
         <button onClick={() => setStep(2)} className="text-clay-400 text-[10px] font-bold uppercase tracking-widest hover:text-clay-900 transition-colors">← Back to sizes</button>

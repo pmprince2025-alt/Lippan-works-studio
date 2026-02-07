@@ -37,6 +37,10 @@ export const DESIGNS: Design[] = [
   { id: 'pfc4', code: 'PF-C-04', price: 600, pricing: { '12x12': 600, '16x16': 1000 }, shape: Shape.CIRCLE, image: './photo_frame_circle_4.jpg', title: 'Mandala Dotted Frame', category: 'photo-frame' },
   { id: 'pfr1', code: 'PF-R-01', price: 500, pricing: { '10x12': 500 }, shape: Shape.RECTANGLE, image: './photo_frame_rectangle_1.jpg', title: 'Peacock Rectangle Frame', category: 'photo-frame' },
 
+  // Photo Frame Square
+  { id: 'pfs1', code: 'PF-S-01', price: 600, pricing: { '8x8': 600, '12x12': 800 }, shape: Shape.SQUARE, image: './photo-shape-square.png', title: 'Square Mosaic', category: 'photo-frame' },
+  { id: 'pfs2', code: 'PF-S-02', price: 600, pricing: { '8x8': 600, '12x12': 800 }, shape: Shape.SQUARE, image: './photo-shape-square.png', title: 'Simple Square', category: 'photo-frame' },
+
   // Name Plate Designs
   { id: 'np1', code: 'NP-01', price: 400, shape: Shape.RECTANGLE, image: './name_plate_1.jpg', title: 'Swagat Shreehit', category: 'name-plate' },
   { id: 'np2', code: 'NP-02', price: 300, shape: Shape.RECTANGLE, image: './name_plate_2.jpg', title: 'Udit Ujjwal', category: 'name-plate' },
