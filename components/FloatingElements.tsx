@@ -44,7 +44,7 @@ const FloatingElements: React.FC = () => {
             style={{
               width: `${el.size}px`,
               height: `${el.size}px`,
-              background: `radial-gradient(circle at 30% 30%, rgba(210, 158, 132, ${el.opacity * 1.5}), rgba(194, 128, 94, ${el.opacity}))`,
+              background: `radial-gradient(circle at 30% 30%, rgba(198, 132, 102, ${el.opacity * 1.5}), rgba(140, 82, 60, ${el.opacity}))`,
               filter: `blur(${el.blur}px)`,
               animation: `float${index} ${20 + el.speed}s ease-in-out infinite`,
               animationDelay: `${el.delay}s`,
@@ -52,7 +52,7 @@ const FloatingElements: React.FC = () => {
               transition: 'transform 0.3s ease-out',
               top: `${10 + index * 20}%`,
               left: `${5 + index * 18}%`,
-              boxShadow: `0 0 ${el.size / 2}px rgba(194, 128, 94, ${el.opacity * 0.5})`,
+              boxShadow: `0 0 ${el.size / 2}px rgba(140, 82, 60, ${el.opacity * 0.4})`,
             }}
           />
         );

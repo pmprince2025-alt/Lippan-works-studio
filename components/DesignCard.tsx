@@ -1,6 +1,5 @@
 import React from 'react';
 import { Design } from '../types';
-import Button from './Button';
 import { PHONE_NUMBER } from '../constants';
 
 interface DesignCardProps {
@@ -9,7 +8,6 @@ interface DesignCardProps {
 }
 
 const DesignCard: React.FC<DesignCardProps> = ({ design, selectedSize }) => {
-  // Get the price for the selected size, or fall back to the default price
   const displayPrice = design.pricing?.[selectedSize] ?? design.price;
 
   const handleOrder = () => {
@@ -29,26 +27,30 @@ Please confirm availability.`;
   };
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-clay-100 hover:shadow-md transition-shadow">
-      <div className="aspect-square w-full overflow-hidden bg-clay-50 relative group">
+    <div className="group bg-white rounded-[32px] overflow-hidden shadow-sm hover:shadow-premium border border-clay-100 transition-all duration-500 flex flex-col h-full">
+      <div className="aspect-square w-full overflow-hidden bg-clay-50 relative">
         <img
           src={design.image}
           alt={design.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
-        <div className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-bold text-clay-800">
+        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-clay-900 border border-clay-100 tracking-widest uppercase">
           {design.code}
         </div>
       </div>
-      <div className="p-4">
-        <h3 className="font-serif text-lg text-clay-900 mb-1">{design.title}</h3>
-        <p className="text-clay-600 text-sm mb-4">Size: {selectedSize}</p>
-        <div className="flex items-center justify-between">
-          <span className="font-bold text-lg text-clay-800">₹{displayPrice}</span>
-          <Button onClick={handleOrder} size="sm" className="px-4 py-2 text-sm">
-            Select & Order
-          </Button>
+      <div className="p-6 flex flex-col flex-grow">
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="font-serif text-xl text-clay-900 leading-tight">{design.title}</h3>
+          <span className="font-serif text-lg font-bold text-clay-800 italic">₹{displayPrice}</span>
         </div>
+        <p className="text-clay-500 text-xs uppercase tracking-[0.2em] font-bold mb-6">Format: {selectedSize}</p>
+
+        <button
+          onClick={handleOrder}
+          className="mt-auto w-full py-3.5 bg-clay-50 group-hover:bg-clay-900 group-hover:text-white text-clay-900 font-bold text-[10px] uppercase tracking-widest rounded-2xl transition-all border border-clay-100 group-hover:border-clay-900"
+        >
+          Enquire & Order
+        </button>
       </div>
     </div>
   );

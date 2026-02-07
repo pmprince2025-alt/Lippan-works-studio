@@ -7,7 +7,6 @@ import DesignCard from '../components/DesignCard';
 const DecorGallery: React.FC = () => {
   const { shape } = useParams<{ shape: string }>();
 
-  // Normalize shape string to Enum
   let currentShape: Shape;
   let sizes;
 
@@ -29,20 +28,24 @@ const DecorGallery: React.FC = () => {
   const filteredDesigns: Design[] = DESIGNS.filter(d => d.shape === currentShape && (!d.category || d.category === 'decor'));
 
   return (
-    <div className="space-y-6 reveal">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 rounded-xl shadow-sm border border-clay-100">
-        <h2 className="font-serif text-2xl text-clay-900 capitalize reveal-heading">{shape} Collection</h2>
+    <div className="flex flex-col gap-12 py-12 max-w-7xl mx-auto px-4">
+      {/* Gallery Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-clay-100 pb-12 reveal">
+        <div className="space-y-4">
+          <span className="inline-block px-4 py-1.5 bg-clay-100 text-clay-600 text-[10px] font-bold uppercase tracking-[0.4em] rounded-full">Gallery</span>
+          <h2 className="font-serif text-4xl md:text-6xl text-clay-900 reveal-heading leading-tight tracking-tight capitalize">{shape}'s <span className="italic text-clay-500 font-normal">Legacy</span></h2>
+        </div>
 
-        {/* Size Filter */}
-        <div className="flex flex-wrap gap-2 items-center">
-          <span className="text-sm font-medium text-clay-600 mr-2">Size:</span>
+        {/* Size Filter Pills */}
+        <div className="flex flex-wrap gap-3 items-center">
+          <span className="text-[10px] font-bold text-clay-400 uppercase tracking-widest mr-2">Dimensions:</span>
           {sizes.map((size) => (
             <button
               key={size.value}
               onClick={() => setSelectedSize(size.value)}
-              className={`px-4 py-2 rounded-full text-sm border transition-all ${selectedSize === size.value
-                ? 'bg-clay-800 text-white border-clay-800 shadow-md'
-                : 'bg-white text-clay-600 border-clay-200 hover:border-clay-400 hover:bg-clay-50'
+              className={`px-6 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-widest border transition-all ${selectedSize === size.value
+                ? 'bg-clay-900 text-white border-clay-900 shadow-premium'
+                : 'bg-white text-clay-600 border-clay-100 hover:border-clay-300'
                 }`}
             >
               {size.label}
@@ -51,22 +54,33 @@ const DecorGallery: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 reveal">
+      {/* Product Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 reveal">
         {filteredDesigns.length > 0 ? (
-          filteredDesigns.map((design) => (
-            <DesignCard
-              key={design.id}
-              design={design}
-              selectedSize={selectedSize}
-            />
+          filteredDesigns.map((design, i) => (
+            <div key={design.id} className="reveal-image" style={{ transitionDelay: `${i * 0.1}s` }}>
+              <DesignCard
+                design={design}
+                selectedSize={selectedSize}
+              />
+            </div>
           ))
         ) : (
-          <div className="col-span-full py-16 text-center">
-            <p className="text-clay-500 text-lg">
+          <div className="col-span-full py-24 text-center space-y-4">
+            <div className="w-16 h-16 bg-clay-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl italic font-serif text-clay-400">?</span>
+            </div>
+            <p className="text-clay-500 text-xl font-light italic font-serif">
               {shape === 'rectangle'
-                ? "sorry we dont have rectangle collection right soon   new stock comming soon"
+                ? "Bespoke rectangular murals are currently in creation. New stock arriving soon."
                 : "No designs found for this category."}
             </p>
+            <button
+              onClick={() => window.location.href = '/decor'}
+              className="text-clay-900 font-bold border-b border-clay-200 hover:border-clay-900 transition-all text-xs uppercase tracking-widest"
+            >
+              ← Return to Collections
+            </button>
           </div>
         )}
       </div>

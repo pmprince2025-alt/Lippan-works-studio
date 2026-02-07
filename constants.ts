@@ -15,7 +15,6 @@ export const SIZES_SQUARE: SizeOption[] = [
 
 export const SIZES_RECTANGLE: SizeOption[] = [
   { label: '10x12 inches', value: '10x12' },
-  { label: '12x24 inches', value: '12x24' },
 ];
 
 export const DESIGNS: Design[] = [
@@ -29,7 +28,7 @@ export const DESIGNS: Design[] = [
   { id: 's1', code: 'S-01', price: 600, pricing: { '8x8': 600, '12x12': 800, '16x16': 1100 }, shape: Shape.SQUARE, image: './decor_square_1.jpg', title: 'Maa Samleswari Square', category: 'decor' },
 
   // Rectangle Designs
-  { id: 'r1', code: 'R-01', price: 500, pricing: { '10x12': 500, '12x24': 1500 }, shape: Shape.RECTANGLE, image: './decor_rectangle_1.jpg', title: 'Jagannath Trio Art', category: 'decor' },
+  { id: 'r1', code: 'R-01', price: 1500, pricing: { '10x12': 1500 }, shape: Shape.RECTANGLE, image: './decor_rectangle_1.jpg', title: 'Jagannath Trio Art', category: 'decor' },
 
   // Photo Frame Designs
   { id: 'pfc1', code: 'PF-C-01', price: 600, pricing: { '12x12': 600, '16x16': 1000 }, shape: Shape.CIRCLE, image: './photo_frame_circle_1.jpg', title: 'Blue Petals Frame', category: 'photo-frame' },

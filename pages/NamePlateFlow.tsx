@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Shape } from '../types';
 import { SIZES_CIRCLE, SIZES_SQUARE, SIZES_RECTANGLE, DESIGNS, PHONE_NUMBER } from '../constants';
-import Button from '../components/Button';
-import { ChevronRight, Type, CheckCircle2, Image as ImageIcon } from 'lucide-react';
+import { ChevronRight, Type, CheckCircle2, Sparkles } from 'lucide-react';
 
 const NamePlateFlow: React.FC = () => {
   const [step, setStep] = useState(1);
@@ -10,7 +9,11 @@ const NamePlateFlow: React.FC = () => {
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedDesignCode, setSelectedDesignCode] = useState<string>('');
 
-  const shapes = [Shape.RECTANGLE, Shape.CIRCLE, Shape.SQUARE]; // Rectangle is popular for name plates
+  const shapes = [
+    { id: Shape.RECTANGLE, image: './name-shape-rectangle.png', label: 'Classic Rectangular' },
+    { id: Shape.CIRCLE, image: './name-shape-circle.png', label: 'Modern Circular' },
+    { id: Shape.SQUARE, image: './name-shape-square.png', label: 'Artisanal Square' },
+  ];
 
   const designsForShape = selectedShape
     ? DESIGNS.filter(d => d.shape === selectedShape && d.category === 'name-plate')
@@ -42,17 +45,25 @@ I will provide the Name and Language details here.`;
   };
 
   const renderStep1 = () => (
-    <div className="space-y-4">
-      <h3 className="font-serif text-xl text-clay-900">Step 1: Choose Shape</h3>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {shapes.map(shape => (
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="space-y-1 text-center md:text-left">
+        <h3 className="font-serif text-3xl text-clay-900">Select Shape</h3>
+        <p className="text-clay-500 text-sm font-light">The silhouette of your entrance.</p>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {shapes.map(item => (
           <button
-            key={shape}
-            onClick={() => { setSelectedShape(shape); setStep(2); }}
-            className="p-6 border border-clay-200 rounded-xl bg-white hover:bg-clay-50 hover:border-clay-400 hover:shadow-md transition-all flex justify-between items-center group"
+            key={item.id}
+            onClick={() => { setSelectedShape(item.id); setStep(2); }}
+            className={`relative h-[350px] rounded-[48px] overflow-hidden border-2 transition-all group shadow-sm hover:shadow-premium
+              ${selectedShape === item.id ? 'border-clay-900' : 'border-clay-100'}`}
           >
-            <span className="text-lg font-medium text-clay-800">{shape}</span>
-            <ChevronRight className="text-clay-400 group-hover:text-clay-600" />
+            <img src={item.image} alt={item.id} className="w-full h-full object-cover grayscale opacity-30 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000" />
+            <div className="absolute inset-0 bg-gradient-to-t from-clay-900/80 via-clay-900/20 to-transparent"></div>
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-white text-center">
+              <span className="font-serif text-3xl uppercase tracking-widest">{item.id}</span>
+              <p className="text-[10px] uppercase font-bold tracking-[0.3em] opacity-60 mt-3">{item.label}</p>
+            </div>
           </button>
         ))}
       </div>
@@ -60,21 +71,24 @@ I will provide the Name and Language details here.`;
   );
 
   const renderStep2 = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="font-serif text-xl text-clay-900">Step 2: Choose Size</h3>
-        <button onClick={() => setStep(1)} className="text-sm text-clay-600 hover:text-clay-900 underline">Back</button>
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="flex justify-between items-end border-b border-clay-100 pb-6">
+        <div className="space-y-1">
+          <h3 className="font-serif text-3xl text-clay-900">Define Size</h3>
+          <p className="text-clay-500 text-sm font-light">Standard dimensions for {selectedShape}.</p>
+        </div>
+        <button onClick={() => setStep(1)} className="text-clay-400 text-[10px] font-bold uppercase tracking-widest hover:text-clay-900 transition-all border-b border-transparent hover:border-clay-900 pb-1">← Change Shape</button>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {getSizes().map(size => (
           <button
             key={size.value}
             onClick={() => { setSelectedSize(size.value); setStep(3); }}
-            className="p-6 border border-clay-200 rounded-xl bg-white hover:bg-clay-50 hover:border-clay-400 hover:shadow-md transition-all flex justify-between items-center group"
+            className={`p-10 rounded-[32px] border-2 transition-all flex justify-between items-center group
+              ${selectedSize === size.value ? 'border-clay-900 bg-clay-900 text-white shadow-xl translate-y-[-2px]' : 'border-clay-50 bg-white hover:border-clay-200 shadow-sm'}`}
           >
-            <span className="text-lg font-medium text-clay-800">{size.label}</span>
-            <ChevronRight className="text-clay-400 group-hover:text-clay-600" />
+            <span className="font-bold text-xl tracking-widest uppercase">{size.label}</span>
+            <ChevronRight className={selectedSize === size.value ? 'text-white' : 'text-clay-200'} size={24} />
           </button>
         ))}
       </div>
@@ -82,28 +96,32 @@ I will provide the Name and Language details here.`;
   );
 
   const renderStep3 = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="font-serif text-xl text-clay-900">Step 3: Pick Design Style</h3>
-        <button onClick={() => setStep(2)} className="text-sm text-clay-600 hover:text-clay-900 underline">Back</button>
+    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="flex justify-between items-end border-b border-clay-100 pb-6">
+        <div className="space-y-1">
+          <h3 className="font-serif text-3xl text-clay-900">Artisan Style</h3>
+          <p className="text-clay-500 text-sm font-light">Traditional patterns for your name plate.</p>
+        </div>
+        <button onClick={() => setStep(2)} className="text-clay-400 text-[10px] font-bold uppercase tracking-widest hover:text-clay-900 transition-all border-b border-transparent hover:border-clay-900 pb-1">← Change Size</button>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {designsForShape.map(design => (
           <div
             key={design.id}
             onClick={() => { setSelectedDesignCode(design.code); setStep(4); }}
-            className={`border rounded-lg overflow-hidden cursor-pointer relative transition-all hover:shadow-lg ${selectedDesignCode === design.code ? 'ring-2 ring-clay-800 border-transparent shadow-md' : 'border-clay-200 bg-white'}`}
+            className={`group rounded-[48px] overflow-hidden cursor-pointer relative transition-all border-2 shadow-sm hover:shadow-premium
+              ${selectedDesignCode === design.code ? 'border-clay-900 ring-4 ring-clay-100 shadow-2xl' : 'border-clay-50 bg-white hover:border-clay-200'}`}
           >
-            <div className="aspect-square bg-clay-50">
-              <img src={design.image} alt={design.title} className="w-full h-full object-cover" />
+            <div className="aspect-square overflow-hidden bg-clay-50">
+              <img src={design.image} alt={design.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 grayscale-[20%] group-hover:grayscale-0" />
             </div>
-            <div className="p-3 bg-white text-center">
-              <p className="text-sm font-bold text-clay-800">{design.code}</p>
-              <p className="text-xs text-clay-500 font-medium">₹{design.price}</p>
+            <div className="p-8 text-center bg-white">
+              <p className="text-[11px] font-bold text-clay-900 tracking-[0.4em] uppercase mb-2">{design.code}</p>
+              <p className="text-clay-400 italic font-serif text-lg">Featured pattern</p>
             </div>
             {selectedDesignCode === design.code && (
-              <div className="absolute top-2 right-2 bg-white rounded-full text-green-600 shadow-sm">
+              <div className="absolute top-6 right-6 bg-clay-900 text-white p-3 rounded-full shadow-2xl animate-in zoom-in-50 duration-300">
                 <CheckCircle2 size={24} />
               </div>
             )}
@@ -112,54 +130,77 @@ I will provide the Name and Language details here.`;
       </div>
 
       {designsForShape.length === 0 && (
-        <div className="text-center py-10">
-          <p className="text-clay-500 mb-4">No specific designs available for this shape yet.</p>
-          <Button onClick={() => setStep(4)}>Proceed with Custom Design</Button>
+        <div className="text-center py-24 space-y-10 border-4 border-dashed border-clay-50 rounded-[64px] bg-clay-50/20">
+          <div className="space-y-3">
+            <p className="text-clay-500 italic font-serif text-2xl">A unique silhouette invites unique art.</p>
+            <p className="text-clay-400 text-sm font-light max-w-sm mx-auto">We specialize in custom creations tailored specifically to your architectural vision.</p>
+          </div>
+          <button
+            onClick={() => setStep(4)}
+            className="px-12 py-5 bg-clay-900 text-white rounded-full font-bold uppercase tracking-widest text-[11px] hover:shadow-premium transition-all hover:scale-105"
+          >
+            Design a custom piece
+          </button>
         </div>
       )}
     </div>
   );
 
   const renderStep4 = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="font-serif text-xl text-clay-900">Summary</h3>
-        <button onClick={() => setStep(3)} className="text-sm text-clay-600 hover:text-clay-900 underline">Back</button>
+    <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 max-w-2xl mx-auto">
+      <div className="text-center space-y-4">
+        <h3 className="font-serif text-4xl text-clay-900">The Artisan's Brief</h3>
+        <p className="text-clay-500 text-sm font-light">Finalizing your bespoke name plate.</p>
       </div>
 
-      <div className="bg-white p-8 rounded-xl border border-clay-200 shadow-md text-center max-w-md mx-auto">
-        <div className="w-20 h-20 bg-clay-100 rounded-full flex items-center justify-center mx-auto mb-6 text-clay-600">
-          <Type size={40} />
-        </div>
-        <h4 className="text-2xl font-bold text-clay-900 mb-1">{selectedShape}</h4>
-        <p className="text-clay-600 mb-1 text-lg">{selectedSize}</p>
-        {selectedDesignCode && (
-          <p className="text-clay-800 font-bold mb-8">Design: {selectedDesignCode}</p>
-        )}
-
-        <div className="bg-amber-50 p-4 rounded-lg text-left mb-8 text-sm text-amber-900 border border-amber-100 leading-relaxed">
-          <strong>Note:</strong> We will finalize the specific Name(s) and Language (English/Hindi/Gujarati, etc.) on WhatsApp.
+      <div className="bg-white p-16 rounded-[64px] border border-clay-100 shadow-premium text-center space-y-12">
+        <div className="w-24 h-24 bg-clay-50 rounded-full flex items-center justify-center mx-auto text-clay-800 border border-clay-100">
+          <Type size={32} />
         </div>
 
-        <Button onClick={handleOrder} fullWidth className="text-lg py-4">
-          Place Order on WhatsApp
-        </Button>
+        <div className="space-y-4">
+          <h4 className="font-serif text-4xl text-clay-900 leading-none">{selectedShape}</h4>
+          <p className="text-clay-400 text-[11px] font-bold uppercase tracking-[0.4em]">{selectedSize}</p>
+          {selectedDesignCode && (
+            <div className="pt-6 border-t border-clay-50 mt-6 group">
+              <span className="text-[10px] text-clay-300 uppercase font-bold tracking-widest block mb-2">Selected Pattern</span>
+              <p className="text-clay-900 font-bold tracking-[0.3em] font-serif text-xl">{selectedDesignCode}</p>
+            </div>
+          )}
+        </div>
+
+        <div className="bg-clay-50/50 p-10 rounded-[40px] text-left text-sm text-clay-600 leading-relaxed italic border-l-4 border-clay-900 relative">
+          <span className="absolute -top-4 left-4 bg-clay-900 text-white px-4 py-1 rounded-full text-[9px] uppercase font-bold tracking-widest">A Personal Note</span>
+          Once we connect on WhatsApp, we will collaborate on the exact typography, language, and mud placement to ensure your entrance reflects your home's identity perfectly.
+        </div>
+
+        <button
+          onClick={handleOrder}
+          className="w-full bg-clay-900 text-white py-7 rounded-[32px] font-bold uppercase tracking-[0.3em] text-[11px] hover:shadow-premium transition-all hover:-translate-y-1 shadow-2xl flex items-center justify-center gap-4 group"
+        >
+          Send Brief via WhatsApp
+          <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+        </button>
       </div>
+
+      <button onClick={() => setStep(3)} className="w-full text-clay-400 text-[10px] font-bold uppercase tracking-widest hover:text-clay-900 transition-all">← Back to Styles</button>
     </div>
   );
 
   return (
-    <div className="max-w-4xl mx-auto reveal">
-      <h2 className="font-serif text-3xl text-clay-900 mb-8 text-center md:text-left reveal-heading">Customize Name Plate</h2>
-
-      {/* Progress Bar */}
-      <div className="flex gap-2 mb-10 max-w-lg mx-auto md:mx-0 reveal" style={{ transitionDelay: '0.2s' }}>
+    <div className="max-w-6xl mx-auto py-12 px-6">
+      {/* Progress Track */}
+      <div className="flex gap-4 mb-24 max-w-lg mx-auto md:mx-0 reveal">
         {[1, 2, 3, 4].map(i => (
-          <div key={i} className={`h-2 flex-1 rounded-full transition-colors ${i <= step ? 'bg-clay-800' : 'bg-clay-200'}`} />
+          <div
+            key={i}
+            className={`h-4 flex-1 rounded-full transition-all duration-1000 ${i <= step ? 'bg-clay-900' : 'bg-clay-50'}`}
+            style={{ width: i === step ? '45%' : '15%' }}
+          />
         ))}
       </div>
 
-      <div className="bg-white/50 backdrop-blur rounded-2xl md:p-8 md:border md:border-clay-100 md:shadow-sm reveal" style={{ transitionDelay: '0.3s' }}>
+      <div className="reveal">
         {step === 1 && renderStep1()}
         {step === 2 && renderStep2()}
         {step === 3 && renderStep3()}
