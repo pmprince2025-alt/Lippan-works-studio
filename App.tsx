@@ -8,9 +8,12 @@ import DecorGallery from './pages/DecorGallery';
 import PhotoFrameFlow from './pages/PhotoFrameFlow';
 import NamePlateFlow from './pages/NamePlateFlow';
 
+import ScrollToTop from './components/ScrollToTop';
+
 const App: React.FC = () => {
   return (
     <HashRouter>
+      <ScrollToTop />
       <Layout>
         <Routes>
           <Route path="/" element={<Home />} />

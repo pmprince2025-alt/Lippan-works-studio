@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { MessageCircle, ArrowLeft } from 'lucide-react';
+import { MessageCircle, ArrowLeft, Menu, X } from 'lucide-react';
 import { PHONE_NUMBER } from '../constants';
 import FloatingElements from './FloatingElements';
 import AIChatAssistant from './AIChatAssistant';
@@ -12,6 +12,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const openWhatsApp = () => {
     const url = `https://wa.me/${PHONE_NUMBER}?text=Hi Lippan Works Studio, I have a query about your art.`;
@@ -59,10 +60,30 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             ))}
           </nav>
 
-          <div className="md:hidden">
-            <Link to="/about" className="text-xs font-bold uppercase tracking-widest text-clay-900">About</Link>
-          </div>
+          <button
+            className="md:hidden text-clay-900 focus:outline-none"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
+
+        {/* Mobile Menu Overlay */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden absolute top-20 left-0 w-full bg-white/95 backdrop-blur-md border-b border-clay-100 shadow-xl animate-in slide-in-from-top-4 duration-300 transform origin-top flex flex-col p-6 space-y-6">
+            {['Home', 'Decor', 'Photo Frame', 'Name Plate', 'About'].map((item) => (
+              <Link
+                key={item}
+                to={item === 'Home' ? '/' : `/${item.toLowerCase().replace(' ', '-')}`}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-lg font-serif font-medium text-clay-800 hover:text-clay-900 border-b border-clay-50 pb-2 transition-all flex justify-between items-center group"
+              >
+                {item}
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+              </Link>
+            ))}
+          </div>
+        )}
       </header>
 
       {/* Main Content */}
