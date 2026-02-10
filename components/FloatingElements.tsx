@@ -3,9 +3,19 @@ import React, { useEffect, useState } from 'react';
 const FloatingElements: React.FC = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    // Check if mobile on mount
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+
     const handleMouseMove = (e: MouseEvent) => {
+      if (isMobile) return;
       const x = (e.clientX / window.innerWidth - 0.5) * 2;
       const y = (e.clientY / window.innerHeight - 0.5) * 2;
       setMousePosition({ x, y });
@@ -17,21 +27,31 @@ const FloatingElements: React.FC = () => {
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
 
     return () => {
+      window.removeEventListener('resize', checkMobile);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [isMobile]);
 
-  const elements = [
+  // Reduced elements for mobile
+  const desktopElements = [
     { size: 300, delay: 0, speed: 20, blur: 2, opacity: 0.15, color: 'clay-300' },
     { size: 200, delay: 2, speed: 15, blur: 3, opacity: 0.1, color: 'clay-200' },
     { size: 250, delay: 4, speed: 25, blur: 2, opacity: 0.12, color: 'clay-400' },
     { size: 180, delay: 1, speed: 18, blur: 4, opacity: 0.08, color: 'clay-300' },
     { size: 220, delay: 3, speed: 22, blur: 3, opacity: 0.1, color: 'clay-200' },
   ];
+
+  const mobileElements = [
+    { size: 200, delay: 0, speed: 20, blur: 2, opacity: 0.08, color: 'clay-300' },
+    { size: 150, delay: 2, speed: 15, blur: 3, opacity: 0.06, color: 'clay-200' },
+    { size: 180, delay: 4, speed: 25, blur: 2, opacity: 0.07, color: 'clay-400' },
+  ];
+
+  const elements = isMobile ? mobileElements : desktopElements;
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -48,8 +68,10 @@ const FloatingElements: React.FC = () => {
               filter: `blur(${el.blur}px)`,
               animation: `float${index} ${20 + el.speed}s ease-in-out infinite`,
               animationDelay: `${el.delay}s`,
-              transform: `translate(${mousePosition.x * el.speed}px, ${mousePosition.y * el.speed - scrollOffset}px)`,
-              transition: 'transform 0.3s ease-out',
+              transform: isMobile 
+                ? `translateY(${-scrollOffset}px)` 
+                : `translate(${mousePosition.x * el.speed}px, ${mousePosition.y * el.speed - scrollOffset}px)`,
+              transition: isMobile ? 'none' : 'transform 0.3s ease-out',
               top: `${10 + index * 20}%`,
               left: `${5 + index * 18}%`,
               boxShadow: `0 0 ${el.size / 2}px rgba(140, 82, 60, ${el.opacity * 0.4})`,
@@ -58,32 +80,36 @@ const FloatingElements: React.FC = () => {
         );
       })}
 
-      {/* Decorative mirror-like elements */}
-      <div
-        className="absolute w-32 h-32 rounded-full border-4 border-clay-200/20"
-        style={{
-          top: '15%',
-          right: '10%',
-          transform: `translate(${mousePosition.x * -10}px, ${mousePosition.y * -10 - scrollPosition * 0.15}px) rotate(${mousePosition.x * 20 + scrollPosition * 0.1}deg)`,
-          transition: 'transform 0.4s ease-out',
-          animation: 'spin 30s linear infinite',
-          background: 'linear-gradient(135deg, rgba(245, 235, 230, 0.1), rgba(237, 217, 206, 0.05))',
-          backdropFilter: 'blur(2px)',
-        }}
-      />
+      {/* Decorative mirror-like elements - only on desktop */}
+      {!isMobile && (
+        <>
+          <div
+            className="absolute w-24 sm:w-32 h-24 sm:h-32 rounded-full border-4 border-clay-200/20"
+            style={{
+              top: '15%',
+              right: '10%',
+              transform: `translate(${mousePosition.x * -10}px, ${mousePosition.y * -10 - scrollPosition * 0.15}px) rotate(${mousePosition.x * 20 + scrollPosition * 0.1}deg)`,
+              transition: 'transform 0.4s ease-out',
+              animation: 'spin 30s linear infinite',
+              background: 'linear-gradient(135deg, rgba(245, 235, 230, 0.1), rgba(237, 217, 206, 0.05))',
+              backdropFilter: 'blur(2px)',
+            }}
+          />
 
-      <div
-        className="absolute w-24 h-24 rounded-full border-3 border-clay-300/15"
-        style={{
-          bottom: '20%',
-          left: '15%',
-          transform: `translate(${mousePosition.x * 12}px, ${mousePosition.y * 12 - scrollPosition * 0.2}px) rotate(${mousePosition.x * -15 - scrollPosition * 0.08}deg)`,
-          transition: 'transform 0.35s ease-out',
-          animation: 'spin 25s linear infinite reverse',
-          background: 'linear-gradient(225deg, rgba(224, 191, 173, 0.08), rgba(208, 158, 132, 0.04))',
-          backdropFilter: 'blur(1px)',
-        }}
-      />
+          <div
+            className="absolute w-16 sm:w-24 h-16 sm:h-24 rounded-full border-3 border-clay-300/15"
+            style={{
+              bottom: '20%',
+              left: '15%',
+              transform: `translate(${mousePosition.x * 12}px, ${mousePosition.y * 12 - scrollPosition * 0.2}px) rotate(${mousePosition.x * -15 - scrollPosition * 0.08}deg)`,
+              transition: 'transform 0.35s ease-out',
+              animation: 'spin 25s linear infinite reverse',
+              background: 'linear-gradient(225deg, rgba(224, 191, 173, 0.08), rgba(208, 158, 132, 0.04))',
+              backdropFilter: 'blur(1px)',
+            }}
+          />
+        </>
+      )}
 
       <style>{`
         @keyframes float0 {

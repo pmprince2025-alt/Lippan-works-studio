@@ -7,4 +7,9 @@ export default defineConfig({
     build: {
         outDir: 'dist',
     },
+    server: {
+        host: '0.0.0.0',
+        port: 5173,
+        strictPort: false,
+    },
 });

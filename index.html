@@ -3,7 +3,11 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+  <meta name="theme-color" content="#c68466" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="format-detection" content="telephone=yes" />
   <meta name="google-site-verification" content="MDoZEiQpq149kndpyug0p8tzs-q1xIlH9OBoRIcG_YU" />
   <title>Lippan Works Studio</title>
 
@@ -61,6 +65,13 @@
     }
   </script>
   <style>
+    /* Base mobile-friendly styles */
+    html {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
     body {
       background-color: #fdfcfb;
       /* Modern Mesh Gradient Background */
@@ -72,6 +83,9 @@
       background-attachment: fixed;
       color: #3d2b24;
       position: relative;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
     }
 
     body::after {
@@ -88,29 +102,39 @@
       background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     }
 
-    /* Reveal Animations - Optimized for Mobile */
-    .reveal {
-      opacity: 0;
-      transform: translate3d(0, 30px, 0);
-      transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1),
-        transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-      will-change: opacity, transform;
+    /* Mobile-safe reveal animations */
+    @media (prefers-reduced-motion: no-preference) {
+      .reveal {
+        opacity: 0;
+        transform: translate3d(0, 20px, 0);
+        transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+          transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: opacity, transform;
+      }
+
+      .reveal-heading {
+        opacity: 0;
+        transform: translate3d(0, 15px, 0);
+        transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s,
+          transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s;
+        will-change: opacity, transform;
+      }
+
+      .reveal-image {
+        opacity: 0;
+        transform: scale(1.01) translate3d(0, 15px, 0);
+        transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1),
+          transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+        will-change: opacity, transform;
+      }
     }
 
-    .reveal-heading {
-      opacity: 0;
-      transform: translate3d(0, 20px, 0);
-      transition: opacity 1s cubic-bezier(0.22, 1, 0.36, 1) 0.2s,
-        transform 1s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
-      will-change: opacity, transform;
-    }
-
-    .reveal-image {
-      opacity: 0;
-      transform: scale(1.02) translate3d(0, 20px, 0);
-      transition: opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1),
-        transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
-      will-change: opacity, transform;
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .reveal-heading, .reveal-image {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
     }
 
     .revealed {
@@ -121,7 +145,31 @@
     .glass {
       background: rgba(255, 255, 255, 0.75);
       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    /* Mobile-specific utilities */
+    @media (max-width: 768px) {
+      .reveal, .reveal-heading, .reveal-image {
+        transition-duration: 0.5s;
+      }
+    }
+
+    /* Touch-friendly tap highlights */
+    * {
+      -webkit-tap-highlight-color: rgba(198, 132, 102, 0.2);
+    }
+
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Prevent text selection on buttons for better mobile UX */
+    button, a {
+      -webkit-user-select: none;
+      user-select: none;
     }
   </style>
   <script>
