@@ -27,8 +27,8 @@ Please confirm availability.`;
   };
 
   return (
-    <div className="group bg-white rounded-[24px] sm:rounded-[32px] overflow-hidden shadow-sm hover:shadow-premium border border-clay-100 transition-all duration-500 flex flex-col h-full">
-      <div className="aspect-square w-full overflow-hidden bg-clay-50 relative">
+    <div className="group bg-white rounded-[16px] sm:rounded-[24px] overflow-hidden shadow-sm hover:shadow-premium border border-clay-100 transition-all duration-500 flex flex-col h-full">
+      <div className="aspect-[4/3] w-full overflow-hidden bg-clay-50 relative">
         <img
           src={design.image}
           alt={design.title}
@@ -39,12 +39,12 @@ Please confirm availability.`;
           {design.code}
         </div>
       </div>
-      <div className="p-4 sm:p-6 flex flex-col flex-grow">
+      <div className="p-3 sm:p-4 flex flex-col flex-grow">
         <div className="flex justify-between items-start mb-2">
           <h3 className="font-serif text-lg sm:text-xl text-clay-900 leading-tight">{design.title}</h3>
           <span className="font-serif text-base sm:text-lg font-bold text-clay-800 italic">₹{displayPrice}</span>
         </div>
-        <p className="text-clay-500 text-xs sm:text-xs uppercase tracking-[0.2em] font-bold mb-4 sm:mb-6">Format: {selectedSize}</p>
+        <p className="text-clay-500 text-[10px] sm:text-[10px] uppercase tracking-[0.2em] font-bold mb-3 sm:mb-4">Format: {selectedSize}</p>
 
         <button
           onClick={handleOrder}

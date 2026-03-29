@@ -45,7 +45,7 @@ const DecorShapeSelect: React.FC = () => {
           <button
             key={shape.id}
             onClick={() => navigate(`/decor/${shape.id.toLowerCase()}`)}
-            className="group relative h-[320px] sm:h-[450px] md:h-[550px] bg-white rounded-[32px] sm:rounded-[56px] shadow-2xl transition-all duration-1000 transform hover:-translate-y-2 overflow-hidden reveal-image"
+            className="group relative h-[280px] sm:h-[380px] md:h-[480px] bg-white rounded-[24px] sm:rounded-[40px] shadow-2xl transition-all duration-1000 transform hover:-translate-y-2 overflow-hidden reveal-image"
             style={{ transitionDelay: `${i * 0.1}s` }}
           >
             {/* Background Image Motif */}

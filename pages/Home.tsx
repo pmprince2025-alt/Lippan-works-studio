@@ -55,7 +55,7 @@ const Home: React.FC = () => {
           <div
             key={cat.path}
             onClick={() => navigate(cat.path)}
-            className="group cursor-pointer relative h-[400px] sm:h-[500px] md:h-[580px] overflow-hidden rounded-[32px] sm:rounded-[56px] shadow-2xl transition-all duration-1000 transform hover:-translate-y-2"
+            className="group cursor-pointer relative h-[280px] sm:h-[380px] md:h-[480px] overflow-hidden rounded-[24px] sm:rounded-[40px] shadow-2xl transition-all duration-1000 transform hover:-translate-y-2"
             style={{ transitionDelay: `${i * 0.15}s` }}
           >
             {/* Background Image with Depth */}
