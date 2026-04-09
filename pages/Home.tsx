@@ -1,9 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PHONE_NUMBER } from '../constants';
+import { supabase } from '../lib/supabase';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const { data } = await supabase
+        .from('categories')
+        .select('*')
+        .order('sort_order');
+      if (data) setCategories(data);
+    };
+    fetchCategories();
+  }, []);
 
   return (
     <div className="flex flex-col gap-12 sm:gap-16 md:gap-24 py-8 sm:py-12 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -32,37 +45,18 @@ const Home: React.FC = () => {
 
       {/* Categories / Portal Grid */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 md:gap-10 px-2 sm:px-0 reveal">
-        {[
-          {
-            title: 'Home Decor',
-            path: '/decor',
-            image: './homedecor.png',
-            desc: 'BESPOKE ARTWORKS',
-          },
-          {
-            title: 'Photo Frames',
-            path: '/photo-frame',
-            image: './photoframe.png',
-            desc: 'GILDED MEMORIES',
-          },
-          {
-            title: 'Name Plates',
-            path: '/name-plate',
-            image: './nameplate.png',
-            desc: 'WELCOMING HERITAGE',
-          },
-        ].map((cat, i) => (
+        {categories.length > 0 ? categories.map((cat, i) => (
           <div
-            key={cat.path}
-            onClick={() => navigate(cat.path)}
+            key={cat.id}
+            onClick={() => navigate(`/${cat.name}`)}
             className="group cursor-pointer relative h-[280px] sm:h-[380px] md:h-[480px] overflow-hidden rounded-[24px] sm:rounded-[40px] shadow-2xl transition-all duration-1000 transform hover:-translate-y-2"
             style={{ transitionDelay: `${i * 0.15}s` }}
           >
             {/* Background Image with Depth */}
             <div className="absolute inset-0 z-0">
               <img
-                src={cat.image}
-                alt={cat.title}
+                src={cat.hero_image}
+                alt={cat.display_name}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-out"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-clay-950/90 via-clay-950/20 to-transparent opacity-90 group-hover:opacity-70 transition-opacity duration-700"></div>
@@ -72,8 +66,8 @@ const Home: React.FC = () => {
             <div className="absolute inset-0 z-10 opacity-10 pointer-events-none mix-blend-overlay bg-[url('data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E')]"></div>
 
             <div className="absolute inset-x-0 bottom-0 p-6 sm:p-12 text-white z-20 space-y-2 sm:space-y-3">
-              <p className="text-white/70 text-[9px] sm:text-[10px] uppercase tracking-[0.4em] font-bold mb-1 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">{cat.desc}</p>
-              <h3 className="font-serif text-3xl sm:text-5xl leading-tight transition-transform duration-700 group-hover:-translate-y-1">{cat.title}</h3>
+              <p className="text-white/70 text-[9px] sm:text-[10px] uppercase tracking-[0.4em] font-bold mb-1 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">{cat.tagline}</p>
+              <h3 className="font-serif text-3xl sm:text-5xl leading-tight transition-transform duration-700 group-hover:-translate-y-1">{cat.display_name}</h3>
             </div>
 
             {/* Hover Indicator */}
@@ -83,7 +77,11 @@ const Home: React.FC = () => {
               </div>
             </div>
           </div>
-        ))}
+        )) : (
+          [...Array(3)].map((_, i) => (
+            <div key={i} className="animate-pulse bg-clay-100 rounded-[40px] h-[480px]"></div>
+          ))
+        )}
       </section>
 
       {/* Featured Custom Section */}
@@ -144,3 +142,4 @@ const Home: React.FC = () => {
 };
 
 export default Home;
+

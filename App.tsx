@@ -14,16 +14,24 @@ const App: React.FC = () => {
   return (
     <HashRouter>
       <ScrollToTop />
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/decor" element={<DecorShapeSelect />} />
-          <Route path="/decor/:shape" element={<DecorGallery />} />
-          <Route path="/photo-frame" element={<PhotoFrameFlow />} />
-          <Route path="/name-plate" element={<NamePlateFlow />} />
-        </Routes>
-      </Layout>
+      <Routes>
+        {/* Public Routes with Main Layout */}
+        <Route
+          path="*"
+          element={
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/decor" element={<DecorShapeSelect />} />
+                <Route path="/decor/:shape" element={<DecorGallery />} />
+                <Route path="/photo-frame" element={<PhotoFrameFlow />} />
+                <Route path="/name-plate" element={<NamePlateFlow />} />
+              </Routes>
+            </Layout>
+          }
+        />
+      </Routes>
     </HashRouter>
   );
 };

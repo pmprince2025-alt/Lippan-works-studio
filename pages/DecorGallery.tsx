@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import { Shape, Design } from '../types';
-import { DESIGNS, SIZES_CIRCLE, SIZES_SQUARE, SIZES_RECTANGLE } from '../constants';
+import { SIZES_CIRCLE, SIZES_SQUARE, SIZES_RECTANGLE } from '../constants';
 import DesignCard from '../components/DesignCard';
+import { supabase } from '../lib/supabase';
 
 const DecorGallery: React.FC = () => {
   const { shape } = useParams<{ shape: string }>();
+  const [designs, setDesigns] = useState<Design[]>([]);
+  const [loading, setLoading] = useState(true);
 
   let currentShape: Shape;
   let sizes;
@@ -25,7 +28,53 @@ const DecorGallery: React.FC = () => {
 
   const [selectedSize, setSelectedSize] = useState<string>(sizes[0].value);
 
-  const filteredDesigns: Design[] = DESIGNS.filter(d => d.shape === currentShape && (!d.category || d.category === 'decor'));
+  useEffect(() => {
+    const fetchDesigns = async () => {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select(`
+            id,
+            code,
+            title,
+            shape,
+            base_price,
+            image_url,
+            product_pricing (
+              size_value,
+              price
+            )
+          `)
+          .eq('is_active', true)
+          .eq('shape', currentShape);
+
+        if (error) throw error;
+
+        const formattedDesigns: Design[] = data.map((d: any) => ({
+          id: d.id,
+          code: d.code,
+          title: d.title,
+          price: d.base_price,
+          image: d.image_url,
+          shape: d.shape as Shape,
+          category: 'decor', // Currently in DecorGallery, so default to 'decor'
+          pricing: d.product_pricing.reduce((acc: any, p: any) => {
+            acc[p.size_value] = p.price;
+            return acc;
+          }, {})
+        }));
+
+        setDesigns(formattedDesigns);
+      } catch (err) {
+        console.error('Error fetching designs:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDesigns();
+  }, [currentShape]);
 
   return (
     <div className="flex flex-col gap-8 sm:gap-12 py-8 sm:py-12 max-w-7xl mx-auto px-4 sm:px-6">
@@ -56,8 +105,19 @@ const DecorGallery: React.FC = () => {
 
       {/* Product Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8 reveal">
-        {filteredDesigns.length > 0 ? (
-          filteredDesigns.map((design, i) => (
+        {loading ? (
+          // Skeleton Loaders
+          [...Array(8)].map((_, i) => (
+            <div key={i} className="animate-pulse space-y-4">
+              <div className="bg-clay-200 aspect-square rounded-2xl sm:rounded-3xl"></div>
+              <div className="space-y-2 px-2">
+                <div className="h-4 bg-clay-200 rounded w-1/2"></div>
+                <div className="h-3 bg-clay-100 rounded w-3/4"></div>
+              </div>
+            </div>
+          ))
+        ) : designs.length > 0 ? (
+          designs.map((design, i) => (
             <div key={design.id} className="reveal-image" style={{ transitionDelay: `${i * 0.1}s` }}>
               <DesignCard
                 design={design}
@@ -76,7 +136,7 @@ const DecorGallery: React.FC = () => {
                 : "No designs found for this category."}
             </p>
             <button
-              onClick={() => window.location.href = '/decor'}
+              onClick={() => window.location.href = '#/decor'}
               className="text-clay-900 font-bold border-b border-clay-200 hover:border-clay-900 transition-all text-xs uppercase tracking-widest py-2"
             >
               ← Return to Collections
@@ -89,3 +149,4 @@ const DecorGallery: React.FC = () => {
 };
 
 export default DecorGallery;
+

@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
-import { Shape } from '../types';
-import { SIZES_CIRCLE, SIZES_SQUARE, SIZES_RECTANGLE, DESIGNS, PHONE_NUMBER } from '../constants';
-import { ChevronRight, Type, CheckCircle2, Sparkles } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Shape, Design, SizeOption } from '../types';
+import { PHONE_NUMBER } from '../constants';
+import { ChevronRight, Type, CheckCircle2 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 const NamePlateFlow: React.FC = () => {
   const [step, setStep] = useState(1);
   const [selectedShape, setSelectedShape] = useState<Shape | null>(null);
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedDesignCode, setSelectedDesignCode] = useState<string>('');
+  const [designs, setDesigns] = useState<Design[]>([]);
+  const [sizes, setSizes] = useState<SizeOption[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const shapes = [
     { id: Shape.RECTANGLE, image: './name-shape-rectangle.png', label: 'Classic Rectangular' },
@@ -15,21 +19,64 @@ const NamePlateFlow: React.FC = () => {
     { id: Shape.SQUARE, image: './name-shape-square.png', label: 'Artisanal Square' },
   ];
 
-  const designsForShape = selectedShape
-    ? DESIGNS.filter(d => d.shape === selectedShape && d.category === 'name-plate')
-    : [];
-
-  const getSizes = () => {
-    switch (selectedShape) {
-      case Shape.CIRCLE: return SIZES_CIRCLE;
-      case Shape.SQUARE: return SIZES_SQUARE;
-      case Shape.RECTANGLE: return SIZES_RECTANGLE;
-      default: return [];
+  // Fetch sizes when shape is selected
+  useEffect(() => {
+    if (selectedShape) {
+      const fetchSizes = async () => {
+        const { data, error } = await supabase
+          .from('shape_sizes')
+          .select('size_label, size_value')
+          .eq('shape', selectedShape)
+          .eq('category', 'name-plate');
+        
+        if (!error && data) {
+          setSizes(data.map(d => ({ label: d.size_label, value: d.size_value })));
+        }
+      };
+      fetchSizes();
     }
-  };
+  }, [selectedShape]);
+
+  // Fetch designs when shape is selected
+  useEffect(() => {
+    if (selectedShape) {
+      const fetchDesigns = async () => {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('products')
+          .select(`
+            id, code, title, shape, base_price, image_url,
+            product_pricing (size_value, price),
+            categories!inner(name)
+          `)
+          .eq('is_active', true)
+          .eq('shape', selectedShape)
+          .eq('categories.name', 'name-plate');
+
+        if (!error && data) {
+          const formatted = data.map((d: any) => ({
+            id: d.id,
+            code: d.code,
+            title: d.title,
+            price: d.base_price,
+            image: d.image_url,
+            shape: d.shape as Shape,
+            category: 'name-plate',
+            pricing: d.product_pricing.reduce((acc: any, p: any) => {
+              acc[p.size_value] = p.price;
+              return acc;
+            }, {})
+          }));
+          setDesigns(formatted);
+        }
+        setLoading(false);
+      };
+      fetchDesigns();
+    }
+  }, [selectedShape]);
 
   const handleOrder = () => {
-    const design = designsForShape.find(d => d.code === selectedDesignCode);
+    const design = designs.find(d => d.code === selectedDesignCode);
     const designTitle = design ? design.title : 'Custom/Not Selected';
 
     const message = `Hi, I would like to order a *Name Plate*:
@@ -80,7 +127,7 @@ I will provide the Name and Language details here.`;
         <button onClick={() => setStep(1)} className="text-clay-400 text-[10px] font-bold uppercase tracking-widest hover:text-clay-900 transition-all border-b border-transparent hover:border-clay-900 pb-1">← Change Shape</button>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-        {getSizes().map(size => (
+        {sizes.map(size => (
           <button
             key={size.value}
             onClick={() => { setSelectedSize(size.value); setStep(3); }}
@@ -106,7 +153,11 @@ I will provide the Name and Language details here.`;
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
-        {designsForShape.map(design => (
+        {loading ? (
+          [...Array(6)].map((_, i) => (
+            <div key={i} className="animate-pulse bg-clay-100 rounded-[32px] h-[350px]"></div>
+          ))
+        ) : designs.map(design => (
           <div
             key={design.id}
             onClick={() => { setSelectedDesignCode(design.code); setStep(4); }}
@@ -129,7 +180,7 @@ I will provide the Name and Language details here.`;
         ))}
       </div>
 
-      {designsForShape.length === 0 && (
+      {designs.length === 0 && !loading && (
         <div className="text-center py-16 sm:py-24 space-y-8 sm:space-y-10 border-4 border-dashed border-clay-50 rounded-[32px] sm:rounded-[64px] bg-clay-50/20 px-4">
           <div className="space-y-3">
             <p className="text-clay-500 italic font-serif text-xl sm:text-2xl">A unique silhouette invites unique art.</p>
@@ -211,3 +262,4 @@ I will provide the Name and Language details here.`;
 };
 
 export default NamePlateFlow;
+

@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
-import { Shape } from '../types';
-import { SIZES_CIRCLE, SIZES_SQUARE, SIZES_RECTANGLE, DESIGNS, PHONE_NUMBER } from '../constants';
+import React, { useState, useEffect } from 'react';
+import { Shape, Design, SizeOption } from '../types';
+import { PHONE_NUMBER } from '../constants';
 import { CheckCircle2, ChevronRight, Sparkles } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 const PhotoFrameFlow: React.FC = () => {
   const [step, setStep] = useState(1);
   const [selectedShape, setSelectedShape] = useState<Shape | null>(null);
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [selectedDesignCode, setSelectedDesignCode] = useState<string>('');
+  const [designs, setDesigns] = useState<Design[]>([]);
+  const [sizes, setSizes] = useState<SizeOption[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const shapes = [
     { id: Shape.CIRCLE, image: './photo-shape-circle.png' },
@@ -15,21 +19,64 @@ const PhotoFrameFlow: React.FC = () => {
     { id: Shape.RECTANGLE, image: './photo-shape-rectangle.png' },
   ];
 
-  const getSizes = () => {
-    switch (selectedShape) {
-      case Shape.CIRCLE: return SIZES_CIRCLE;
-      case Shape.SQUARE: return SIZES_SQUARE;
-      case Shape.RECTANGLE: return SIZES_RECTANGLE;
-      default: return [];
+  // Fetch sizes when shape is selected
+  useEffect(() => {
+    if (selectedShape) {
+      const fetchSizes = async () => {
+        const { data, error } = await supabase
+          .from('shape_sizes')
+          .select('size_label, size_value')
+          .eq('shape', selectedShape)
+          .eq('category', 'photo-frame');
+        
+        if (!error && data) {
+          setSizes(data.map(d => ({ label: d.size_label, value: d.size_value })));
+        }
+      };
+      fetchSizes();
     }
-  };
+  }, [selectedShape]);
 
-  const designsForShape = selectedShape
-    ? DESIGNS.filter(d => d.shape === selectedShape && d.category === 'photo-frame')
-    : [];
+  // Fetch designs when shape and size are selected (or just shape)
+  useEffect(() => {
+    if (selectedShape) {
+      const fetchDesigns = async () => {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from('products')
+          .select(`
+            id, code, title, shape, base_price, image_url,
+            product_pricing (size_value, price),
+            categories!inner(name)
+          `)
+          .eq('is_active', true)
+          .eq('shape', selectedShape)
+          .eq('categories.name', 'photo-frame');
+
+        if (!error && data) {
+          const formatted = data.map((d: any) => ({
+            id: d.id,
+            code: d.code,
+            title: d.title,
+            price: d.base_price,
+            image: d.image_url,
+            shape: d.shape as Shape,
+            category: 'photo-frame',
+            pricing: d.product_pricing.reduce((acc: any, p: any) => {
+              acc[p.size_value] = p.price;
+              return acc;
+            }, {})
+          }));
+          setDesigns(formatted);
+        }
+        setLoading(false);
+      };
+      fetchDesigns();
+    }
+  }, [selectedShape]);
 
   const handleOrder = () => {
-    const design = designsForShape.find(d => d.code === selectedDesignCode);
+    const design = designs.find(d => d.code === selectedDesignCode);
     const designTitle = design ? design.title : 'Custom/Not Selected';
 
     const message = `Hi, I would like to order a *Photo Frame*:
@@ -77,7 +124,7 @@ I will share the photo here for the frame.`;
         <p className="text-clay-500 text-sm font-light">Available dimensions for {selectedShape}.</p>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-        {getSizes().map(size => (
+        {sizes.map(size => (
           <button
             key={size.value}
             onClick={() => { setSelectedSize(size.value); setStep(3); }}
@@ -99,8 +146,12 @@ I will share the photo here for the frame.`;
         <p className="text-clay-500 text-sm font-light">Fine artisanal patterns for your frame.</p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
-        {designsForShape.length > 0 ? (
-          designsForShape.map(design => (
+        {loading ? (
+          [...Array(4)].map((_, i) => (
+            <div key={i} className="animate-pulse bg-clay-100 rounded-[32px] h-[300px]"></div>
+          ))
+        ) : designs.length > 0 ? (
+          designs.map(design => (
             <button
               key={design.code}
               onClick={() => setSelectedDesignCode(design.code)}
@@ -189,3 +240,4 @@ I will share the photo here for the frame.`;
 };
 
 export default PhotoFrameFlow;
+
